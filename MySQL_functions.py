@@ -19,4 +19,9 @@ def temp_instert_into_db(df):
             (df['timestamp'][i], df['open'][i], df['high'][i], df['low'][i], df['close'][i], df['volume'][i],
              float(df['close_time'][i]), df['quote_asset_volume'][i], int(df['number_of_trades'][i]),
              df['taker_buy_base_asset_volume'][i], df['taker_buy_quote_asset_volume'][i]))
+
+    conn.commit()
     print("data uploaded to database")
+
+    cursor.close()
+    conn.close()

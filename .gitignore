@@ -1,2 +1,6 @@
 test/
 api_keys.py
+data_btc_50_days.csv
+data_eth_50_days.csv
+data_btc_200_days.csv
+data_eth_200_days.csv

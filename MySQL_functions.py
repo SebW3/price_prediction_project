@@ -1,4 +1,5 @@
 import mysql.connector
+from sqlalchemy import create_engine, MetaData, select, Table
 from api_keys import MySQL_login
 
 host, user, password, database = MySQL_login()
@@ -25,3 +26,19 @@ def temp_instert_into_db(df):
 
     cursor.close()
     conn.close()
+
+
+def get_last_date():
+    engine = create_engine(f"mysql://{user}:{password}@localhost/{database}", echo=True)
+    conn = engine.connect()
+    metadata = MetaData()
+
+    btc_market_data = Table("btc_market_data", metadata, schema="project", autoload_with=engine, extend_existing=True)
+    select_stmt = select(btc_market_data).order_by(btc_market_data.c.timestamp)
+
+    result = conn.execute(select_stmt).fetchall()
+
+    conn.close()
+
+    print(result[-1][1][:10])
+    return result[0][1][:10]

@@ -1,5 +1,6 @@
 import mysql.connector
-from sqlalchemy import create_engine, MetaData, select, Table
+from sqlalchemy import create_engine, MetaData, select, Table, delete
+import pandas as pd
 from api_keys import MySQL_login
 
 host, user, password, database = MySQL_login()
@@ -42,3 +43,32 @@ def get_last_date():
 
     print(result[-1][1][:10])
     return result[0][1][:10]
+
+
+def divide_the_data(train_data_percentage=0.8, delete_from_db=False, save_test_data=False):
+    engine = create_engine(f"mysql://{user}:{password}@localhost/{database}", echo=True)
+    conn = engine.connect()
+    metadata = MetaData()
+
+    btc_market_data = Table("btc_market_data", metadata, schema="project", autoload_with=engine, extend_existing=True)
+    select_stmt = select(btc_market_data).order_by(btc_market_data.c.timestamp)
+
+    result = conn.execute(select_stmt).fetchall()
+
+    df = pd.DataFrame(result, columns=btc_market_data.columns)
+
+    split_index = int(train_data_percentage * len(df))  # how much % training data to test data
+    train_data = df.iloc[:split_index]
+    test_data = df.iloc[split_index:]
+
+    if delete_from_db:
+        save_test_data = True
+        conn.execute(delete(btc_market_data).where(btc_market_data.c.timestamp >= test_data.iloc[:, 1].min()))
+        conn.commit()
+
+    conn.close()
+
+    if save_test_data:
+        test_data.to_csv('test_data.csv', index=False)
+
+    return train_data, test_data

@@ -1,19 +1,13 @@
 # Price prediction project
 
-This project will try to predict future prices of cryptocurrencies by using data science and machine learning
+This project will try to predict market value of a car by using their data like model, year, km driven and more. Project will use regression models for that
 
 ## Setup
 ### Required libraries:
-- sqlalchemy
-- python-binance
-- mysql-connector-python
 - pandas
+- scikitlearn
 
-<code>def get_market_data(days=None, start_date=None)</code><br>
-start_date must be in yyyy-mm-dd format. Code is made in such a way that that is date from witch to download into the past
 
-<code>def divide_the_data(train_data_percentage=0.8, delete_from_db=False, save_test_data=False)</code><br>
-this function divides the data to training and test for machine learning purposes<br>
-"train_data_percentage" determine the % of the data that will be used for training<br>
-if "delete_from_db" is true it will delete test data from database and it will change "save_test_data" to true<br>
-if "save_test_data" will save test data to test_data.csv file<br>
+
+## Source
+<a href="https://www.kaggle.com/datasets/nehalbirla/vehicle-dataset-from-cardekho">Vehicle dataset</a> from kaggle. I am using "Car details v3.csv"

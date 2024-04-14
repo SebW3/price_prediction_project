@@ -55,7 +55,7 @@ def divide_the_data(train_data_percentage=0.8, delete_from_db=False, save_test_d
 
     result = conn.execute(select_stmt).fetchall()
 
-    df = pd.DataFrame(result, columns=btc_market_data.columns)
+    df = pd.DataFrame(result) #  columns=btc_market_data.columns
 
     split_index = int(train_data_percentage * len(df))  # how much % training data to test data
     train_data = df.iloc[:split_index]
@@ -72,3 +72,17 @@ def divide_the_data(train_data_percentage=0.8, delete_from_db=False, save_test_d
         test_data.to_csv('test_data.csv', index=False)
 
     return train_data, test_data
+
+def select_all_from_db():
+    engine = create_engine(f"mysql://{user}:{password}@localhost/{database}", echo=True)
+    conn = engine.connect()
+    metadata = MetaData()
+    btc_market_data = Table("btc_market_data", metadata, schema="project", autoload_with=engine, extend_existing=True)
+    select_stmt = select(btc_market_data).order_by(btc_market_data.c.timestamp)
+
+    result = conn.execute(select_stmt).fetchall()
+    conn.close()
+
+    df = pd.DataFrame(result)
+
+    return df
